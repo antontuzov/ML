@@ -3,7 +3,6 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useProgress } from '@/context/ProgressContext'
 import { 
-  BookOpen, 
   Menu, 
   X, 
   Search, 
