@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
+import { TOTAL_ARTICLES } from '@/content'
 
 interface ProgressContextType {
   completedSections: string[]
@@ -8,20 +9,32 @@ interface ProgressContextType {
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined)
 
+const STORAGE_KEY = 'ml-handbook-progress'
+
+function loadProgress(): string[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
+}
+
 export function ProgressProvider({ children }: { children: ReactNode }) {
-  const [completedSections, setCompletedSections] = useState<string[]>([])
+  const [completedSections, setCompletedSections] = useState<string[]>(loadProgress)
 
   const toggleSection = (sectionId: string) => {
-    setCompletedSections(prev => 
-      prev.includes(sectionId)
+    setCompletedSections(prev => {
+      const next = prev.includes(sectionId)
         ? prev.filter(id => id !== sectionId)
         : [...prev, sectionId]
-    )
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch {}
+      return next
+    })
   }
 
   const getProgress = () => {
-    const totalSections = 21 // Total number of sections in the handbook
-    return Math.round((completedSections.length / totalSections) * 100)
+    return Math.round((completedSections.length / TOTAL_ARTICLES) * 100)
   }
 
   return (
