@@ -17,7 +17,7 @@ import {
 const chapters = [
   {
     id: 'intro',
-    title: 'Introduction to ML',
+    title: '1. Introduction to ML',
     icon: '🚀',
     sections: [
       { id: 'intro', title: 'Overview' },
@@ -27,8 +27,41 @@ const chapters = [
     ]
   },
   {
+    id: 'supervised-learning',
+    title: '2. Classical Supervised Learning',
+    icon: '📚',
+    sections: [
+      { id: 'supervised-intro', title: '2.1 Introduction' },
+      { id: 'linear-models', title: '2.2 Linear Models' },
+      { id: 'metric-methods', title: '2.3 Metric Methods & KNN' },
+      { id: 'decision-trees', title: '2.4 Decision Trees' },
+      { id: 'supervised-conclusion', title: '2.7 Conclusion' }
+    ]
+  },
+  {
+    id: 'ensembles-advanced',
+    title: '2.5 Ensemble Methods',
+    icon: '🌳',
+    sections: [
+      { id: 'bias-variance', title: 'Bias-Variance Decomposition' },
+      { id: 'bagging-forests', title: 'Bagging & Random Forests' },
+      { id: 'ensemble-boosting', title: 'Introduction to Boosting' },
+      { id: 'stacking', title: 'Stacking & Blending' }
+    ]
+  },
+  {
+    id: 'gradient-boosting',
+    title: '2.6 Gradient Boosting',
+    icon: '🚀',
+    sections: [
+      { id: 'gbdt-intuition', title: 'GBDT Intuition' },
+      { id: 'gbdt-math', title: 'The Mathematics' },
+      { id: 'gbdt-practice', title: 'In Practice (XGBoost/LGBM/CB)' }
+    ]
+  },
+  {
     id: 'supervised',
-    title: 'Supervised Learning',
+    title: 'Supervised Learning (Legacy)',
     icon: '📊',
     sections: [
       { id: 'classification', title: 'Classification' },
@@ -37,33 +70,22 @@ const chapters = [
     ]
   },
   {
+    id: 'ensemble',
+    title: 'Ensemble Methods (Legacy)',
+    icon: '🌲',
+    sections: [
+      { id: 'bagging', title: 'Bagging & Random Forests' },
+      { id: 'boosting', title: 'Gradient Boosting' }
+    ]
+  },
+  {
     id: 'unsupervised',
-    title: 'Unsupervised Learning',
+    title: '3. Unsupervised Learning',
     icon: '🔍',
     sections: [
       { id: 'clustering', title: 'Clustering' },
       { id: 'dimensionality', title: 'Dimensionality Reduction' },
       { id: 'anomaly', title: 'Anomaly Detection' }
-    ]
-  },
-  {
-    id: 'neural',
-    title: 'Neural Networks',
-    icon: '🧠',
-    sections: [
-      { id: 'basics', title: 'Neural Network Basics' },
-      { id: 'architecture', title: 'Network Architecture' },
-      { id: 'training', title: 'Training Techniques' }
-    ]
-  },
-  {
-    id: 'deep-learning',
-    title: 'Deep Learning',
-    icon: '⚡',
-    sections: [
-      { id: 'cnn', title: 'Convolutional Neural Networks' },
-      { id: 'rnn', title: 'Recurrent Neural Networks' },
-      { id: 'transformers', title: 'Transformers' }
     ]
   },
   {
@@ -73,7 +95,8 @@ const chapters = [
     sections: [
       { id: 'metrics', title: 'Evaluation Metrics' },
       { id: 'validation', title: 'Cross-Validation' },
-      { id: 'overfitting', title: 'Overfitting & Underfitting' }
+      { id: 'overfitting', title: 'Overfitting & Underfitting' },
+      { id: 'hyperparameter-tuning', title: 'Hyperparameter Tuning' }
     ]
   },
   {
@@ -86,12 +109,35 @@ const chapters = [
     ]
   },
   {
-    id: 'ensemble',
-    title: 'Ensemble Methods',
-    icon: '🌲',
+    id: 'neural',
+    title: 'Deep Learning: Intro',
+    icon: '🧠',
     sections: [
-      { id: 'bagging', title: 'Bagging & Random Forests' },
-      { id: 'boosting', title: 'Gradient Boosting' }
+      { id: 'basics', title: 'Neural Networks' },
+      { id: 'architecture', title: 'Fully Connected Networks' },
+      { id: 'backprop', title: 'Backpropagation' },
+      { id: 'training', title: 'Training Techniques' }
+    ]
+  },
+  {
+    id: 'deep-learning',
+    title: 'Deep Learning: Architectures',
+    icon: '⚡',
+    sections: [
+      { id: 'cnn', title: 'Convolutional Neural Networks' },
+      { id: 'rnn', title: 'Sequence Models' },
+      { id: 'transformers', title: 'Transformers' },
+      { id: 'gnn', title: 'Graph Neural Networks' },
+      { id: 'point-clouds', title: 'Point Cloud Networks' }
+    ]
+  },
+  {
+    id: 'dl-practice',
+    title: 'Deep Learning: Practice',
+    icon: '🏗️',
+    sections: [
+      { id: 'representation-learning', title: 'Representation Learning' },
+      { id: 'knowledge-distillation', title: 'Knowledge Distillation' }
     ]
   },
   {
@@ -99,6 +145,8 @@ const chapters = [
     title: 'Probabilistic Models',
     icon: '🎲',
     sections: [
+      { id: 'prob-approach', title: 'Probabilistic Approach' },
+      { id: 'glm', title: 'Generalized Linear Models' },
       { id: 'bayesian', title: 'Bayesian Approach' },
       { id: 'generative-models', title: 'Generative vs Discriminative' },
       { id: 'latent-variables', title: 'Latent Variable Models' }
@@ -173,7 +221,7 @@ function ProgressRing({ progress }: { progress: number }) {
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [expandedChapters, setExpandedChapters] = useState<string[]>(['intro'])
+  const [expandedChapters, setExpandedChapters] = useState<string[]>(['intro', 'supervised-learning'])
   const [tipIndex] = useState(() => Math.floor(Math.random() * tips.length))
   const location = useLocation()
   const { completedSections, toggleSection, getProgress } = useProgress()

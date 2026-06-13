@@ -3,603 +3,526 @@ import { Article } from './types'
 
 export const evaluationArticles: Record<string, Article> = {
   metrics: {
-    title: 'Evaluation Metrics',
+    title: 'Classification & Regression Metrics',
+    estimatedTime: '22 min',
+    difficulty: 'intermediate',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Choosing the right evaluation metrics is crucial for assessing model performance. Different 
-          metrics provide insights into various aspects of model behavior, and the choice depends on 
-          the problem type and business objectives.
+          How do you measure model quality? A <strong>metric</strong> is a quantitative criterion that formally
+          assesses how well a model solves its task. The right metric depends on the problem, the costs of
+          different errors, and your business objectives.
         </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">Classification Metrics</h2>
+
+        <div className="my-6 p-4 rounded-lg border border-blue-500/20 bg-blue-500/5">
+          <p className="text-sm font-medium mb-2">Loss Function ≠ Metric</p>
+          <p className="text-sm text-muted-foreground">
+            A <strong>loss function</strong> must be differentiable (for optimization). A <strong>metric</strong>
+            is an external, objective criterion — it depends on predicted labels, not model parameters.
+            Example: cross-entropy is the loss, accuracy is the metric. They can coincide (MSE as both loss and metric)
+            but often differ.
+          </p>
+        </div>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Binary Classification: Confusion Matrix</h2>
+        <p className="leading-relaxed mb-4">
+          Every prediction on a binary classification task falls into one of four categories:
+        </p>
+        <Card className="my-6 border-primary/20 bg-primary/5">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-3 gap-1 text-xs max-w-[340px] mx-auto">
+              <div className="p-2" />
+              <div className="p-2 text-center font-bold">Pred +</div>
+              <div className="p-2 text-center font-bold">Pred −</div>
+              <div className="p-2 text-right font-bold">Actual +</div>
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 text-center rounded font-medium">TP ✓</div>
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 text-center rounded font-medium">FN ✗</div>
+              <div className="p-2 text-right font-bold">Actual −</div>
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 text-center rounded font-medium">FP ✗</div>
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 text-center rounded font-medium">TN ✓</div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3 text-center">
+              TP=True Positive, FP=False Positive, FN=False Negative, TN=True Negative
+            </p>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Core Classification Metrics</h2>
         <div className="space-y-4 my-6">
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Accuracy</h3>
-              <p className="text-sm text-muted-foreground">
-                Proportion of correct predictions. Simple but can be misleading with imbalanced datasets.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Precision</h3>
-              <p className="text-sm text-muted-foreground">
-                Of all positive predictions, how many were actually positive? Important when false positives are costly.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Recall (Sensitivity)</h3>
-              <p className="text-sm text-muted-foreground">
-                Of all actual positives, how many did we catch? Critical when missing positives is dangerous (e.g., disease detection).
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">F1-Score</h3>
-              <p className="text-sm text-muted-foreground">
-                Harmonic mean of precision and recall. Provides balance between the two metrics.
-              </p>
-            </CardContent>
-          </Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Accuracy</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-2">
+              Acc = (TP + TN) / (TP + TN + FP + FN)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Fraction of correct predictions. Simple but misleading with class imbalance — a classifier
+              that always predicts "healthy" achieves 99% accuracy on a dataset with 1% disease rate.
+            </p>
+          </CardContent></Card>
+
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Precision</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-2">
+              Precision = TP / (TP + FP)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Of all predicted positives, how many were actually positive? Critical when false positives
+              are costly (e.g., spam filter — don't send legitimate emails to spam).
+            </p>
+          </CardContent></Card>
+
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Recall (Sensitivity / True Positive Rate)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-2">
+              Recall = TP / (TP + FN)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Of all actual positives, how many did we find? Critical when missing positives is dangerous
+              (e.g., cancer screening — don't miss any malignant tumors).
+            </p>
+          </CardContent></Card>
+
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">F1-Score</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-2">
+              F1 = 2 × (Precision × Recall) / (Precision + Recall)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Harmonic mean of precision and recall. Penalizes extreme imbalances between them.
+              Use when you need a single number balancing both concerns.
+            </p>
+          </CardContent></Card>
         </div>
 
         <Card className="my-6 bg-accent/50 border-accent">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">Confusion Matrix</h3>
-            <p className="text-sm text-muted-foreground mb-2">
-              A table showing true positives, false positives, true negatives, and false negatives.
+            <h3 className="font-semibold mb-2">The Precision-Recall Tradeoff</h3>
+            <p className="text-sm text-muted-foreground">
+              By adjusting the classification threshold, you can increase precision at the cost of recall
+              (or vice versa). The precision-recall curve visualizes this tradeoff. The area under this curve
+              (AUPRC) is especially useful for imbalanced datasets.
             </p>
-            <div className="bg-background p-3 rounded text-xs font-mono">
-              <div>Predicted: Yes | No</div>
-              <div>Actual Yes: TP | FN</div>
-              <div>Actual No: FP | TN</div>
-            </div>
           </CardContent>
         </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">ROC Curve & AUC</h2>
+        <p className="leading-relaxed mb-4">
+          The <strong>ROC curve</strong> plots the True Positive Rate (Recall) against the False Positive Rate
+          at every possible threshold. The <strong>AUC</strong> (Area Under the Curve) summarizes the entire curve:
+        </p>
+        <div className="grid grid-cols-3 gap-3 my-6">
+          <Card className="border-green-500/20 bg-green-500/5"><CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">1.0</p>
+            <p className="text-xs text-muted-foreground">Perfect classifier</p>
+          </CardContent></Card>
+          <Card className="border-yellow-500/20 bg-yellow-500/5"><CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">0.7–0.9</p>
+            <p className="text-xs text-muted-foreground">Good classifier</p>
+          </CardContent></Card>
+          <Card className="border-red-500/20 bg-red-500/5"><CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">0.5</p>
+            <p className="text-xs text-muted-foreground">Random guessing</p>
+          </CardContent></Card>
+        </div>
 
         <h2 className="text-2xl font-bold mt-8 mb-4">Regression Metrics</h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li><strong>Mean Absolute Error (MAE):</strong> Average absolute difference between predicted and actual values</li>
-          <li><strong>Mean Squared Error (MSE):</strong> Average squared differences (penalizes large errors more)</li>
-          <li><strong>Root Mean Squared Error (RMSE):</strong> Square root of MSE (in same units as target)</li>
-          <li><strong>R-squared (R²):</strong> Proportion of variance explained by the model (0 to 1, higher is better)</li>
-          <li><strong>Mean Absolute Percentage Error (MAPE):</strong> Percentage-based error metric</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">ROC Curve and AUC</h2>
-        <p className="leading-relaxed mb-4">
-          The ROC (Receiver Operating Characteristic) curve plots True Positive Rate vs. False Positive Rate 
-          at various threshold settings. AUC (Area Under Curve) summarizes the curve - a value of 1 indicates 
-          perfect classification, 0.5 indicates random guessing.
-        </p>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Choosing the Right Metric</h2>
-        <p className="leading-relaxed mb-4">
-          Consider your business context:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Spam detection: High precision (don't miss legitimate emails)</li>
-          <li>Cancer screening: High recall (don't miss any cases)</li>
-          <li>Recommendation systems: Balance of precision and diversity</li>
-          <li>Financial forecasting: Low RMSE for accurate predictions</li>
-        </ul>
-
-        <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Complete evaluation toolkit - choose and interpret metrics for any ML problem.
-            </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ Metric selection framework</li>
-              <li>✓ Trade-offs between different metrics</li>
-              <li>✓ Statistical significance testing</li>
-              <li>✓ Business metric alignment</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="bg-background p-3 rounded-lg border">
-                <p className="text-sm font-medium mb-2">Calculate Precision & Recall</p>
-                <p className="text-xs text-muted-foreground mb-2">
-                  Your model predicted 100 emails as spam. 80 were actually spam (TP), 20 were not (FP). There were 10 spam emails you missed (FN).
-                </p>
-                <div className="text-xs space-y-1 ml-2 mb-2">
-                  <div><strong>Precision:</strong> TP / (TP + FP) = 80 / (80 + 20) = 80%</div>
-                  <div><strong>Recall:</strong> TP / (TP + FN) = 80 / (80 + 10) = 89%</div>
-                  <div><strong>F1-Score:</strong> 2 × (P × R) / (P + R) = 84%</div>
-                </div>
-                <p className="text-xs text-muted-foreground italic">
-                  Question: Which matters more for spam detection - precision or recall?
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-4 rounded-lg border">
-              <p className="text-sm font-medium mb-3">Confusion Matrix Visualization</p>
-              <div className="grid grid-cols-2 gap-2 text-xs max-w-[300px] mx-auto">
-                <div className="p-2"></div>
-                <div className="p-2 text-center font-bold">Predicted Yes</div>
-                <div className="p-2 text-center font-bold">Predicted No</div>
-                <div className="p-2 text-right font-bold">Actual Yes</div>
-                <div className="p-2 bg-green-100 text-center">TP ✓</div>
-                <div className="p-2 bg-red-100 text-center">FN ✗</div>
-                <div className="p-2 text-right font-bold">Actual No</div>
-                <div className="p-2 bg-red-100 text-center">FP ✗</div>
-                <div className="p-2 bg-green-100 text-center">TN ✓</div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Green = Correct predictions | Red = Errors
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-3 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">MSE (Mean Squared Error)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-1">MSE = (1/n) Σ(ŷᵢ − yᵢ)²</p>
+            <p className="text-xs text-muted-foreground">Penalizes large errors quadratically. Differentiable. Sensitive to outliers.</p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">RMSE (Root Mean Squared Error)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-1">RMSE = √MSE</p>
+            <p className="text-xs text-muted-foreground">Same units as the target. Easier to interpret than MSE.</p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">MAE (Mean Absolute Error)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-1">MAE = (1/n) Σ|ŷᵢ − yᵢ|</p>
+            <p className="text-xs text-muted-foreground">Robust to outliers. Less sensitive to large individual errors.</p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">R² (Coefficient of Determination)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block mb-1">R² = 1 − (SS_res / SS_tot)</p>
+            <p className="text-xs text-muted-foreground">Proportion of variance explained. 1.0 = perfect, 0.0 = no better than mean. Can be negative.</p>
+          </CardContent></Card>
+        </div>
 
         <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">Choosing the Right Metric</CardTitle></CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Accuracy</span>
-                <span className="text-muted-foreground">(TP + TN) / Total - overall correctness</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Precision</span>
-                <span className="text-muted-foreground">TP / (TP + FP) - quality of positive predictions</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Recall</span>
-                <span className="text-muted-foreground">TP / (TP + FN) - completeness of detection</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">F1-Score</span>
-                <span className="text-muted-foreground">Harmonic mean of precision and recall</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">AUC-ROC</span>
-                <span className="text-muted-foreground">Area under ROC curve - threshold-independent</span>
-              </div>
+            <div className="grid gap-2 text-sm text-muted-foreground">
+              <p>• <strong>Spam detection:</strong> High precision (don't lose legitimate emails)</p>
+              <p>• <strong>Cancer screening:</strong> High recall (don't miss any cases)</p>
+              <p>• <strong>Fraud detection:</strong> F1-score (balance both concerns)</p>
+              <p>• <strong>House prices:</strong> MAE or RMSE (interpretable in dollars)</p>
+              <p>• <strong>Imbalanced classification:</strong> AUPRC or balanced accuracy, not plain accuracy</p>
             </div>
           </CardContent>
         </Card>
       </>
     )
   },
+
   validation: {
-    title: 'Cross-Validation',
+    title: 'Cross-Validation & Data Splitting',
+    estimatedTime: '18 min',
+    difficulty: 'intermediate',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Cross-validation is a resampling technique used to evaluate machine learning models on limited 
-          data. It provides a more robust estimate of model performance compared to a simple train-test split.
+          Cross-validation is the standard procedure for reliably estimating model quality.
+          It helps compare models, detect overfitting, and ensure your evaluation is robust
+          and not dependent on a lucky or unlucky data split.
         </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">Why Cross-Validation?</h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Better utilization of available data</li>
-          <li>Reduces variance in performance estimates</li>
-          <li>Detects overfitting more effectively</li>
-          <li>Provides confidence intervals for metrics</li>
-          <li>Helps in model selection and hyperparameter tuning</li>
-        </ul>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Hold-Out Split</h2>
+        <p className="leading-relaxed mb-4">
+          The simplest approach: split data into <strong>train</strong> and <strong>test</strong> sets.
+          Train on one, evaluate on the other. But a single split can be noisy.
+        </p>
 
         <Card className="my-6 bg-accent/50 border-accent">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">The Problem with Single Split</h3>
+            <h3 className="font-semibold mb-2">Always Add a Validation Set!</h3>
             <p className="text-sm text-muted-foreground">
-              A single train-test split might give misleading results if the split is unrepresentative. 
-              Cross-validation averages results over multiple splits for a more reliable estimate.
+              If you tune hyperparameters on the test set, you're leaking test information into the model.
+              Split into <strong>train → validation → test</strong>: tune on validation, final comparison on test.
             </p>
+            <div className="flex items-center gap-2 mt-3 text-xs">
+              <div className="flex-1 p-2 bg-blue-100 dark:bg-blue-900/30 rounded text-center">Train (60-70%)</div>
+              <span>→</span>
+              <div className="flex-1 p-2 bg-orange-100 dark:bg-orange-900/30 rounded text-center">Validation (10-20%)</div>
+              <span>→</span>
+              <div className="flex-1 p-2 bg-green-100 dark:bg-green-900/30 rounded text-center">Test (10-20%)</div>
+            </div>
           </CardContent>
         </Card>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">K-Fold Cross-Validation</h2>
+        <h3 className="text-xl font-bold mt-6 mb-3">Why Shuffling Matters</h3>
         <p className="leading-relaxed mb-4">
-          The dataset is divided into K equal folds. The model is trained K times, each time using K-1 folds 
-          for training and 1 fold for testing. Results are averaged across all folds.
+          If data has any ordering (e.g., sorted by class or by time), a naive split without shuffling
+          can create train/test sets with completely different distributions. For gradient-based models,
+          unshuffled data produces periodic training loss spikes as the model re-encounters batch boundaries.
         </p>
-        <ol className="list-decimal list-inside space-y-2 mb-6">
-          <li>Shuffle the dataset randomly</li>
-          <li>Split into K groups (folds)</li>
-          <li>For each unique group: use it as test set, remaining as training set</li>
-          <li>Calculate summary statistic from K scores</li>
-        </ol>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Common Variations</h2>
-        <div className="grid gap-4 my-6">
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Stratified K-Fold</h3>
-              <p className="text-sm text-muted-foreground">
-                Maintains class distribution in each fold. Essential for imbalanced datasets.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Leave-One-Out (LOOCV)</h3>
-              <p className="text-sm text-muted-foreground">
-                K equals number of samples. Maximum data usage but computationally expensive.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Time Series Split</h3>
-              <p className="text-sm text-muted-foreground">
-                Respects temporal ordering. Training set only contains past data relative to test set.
-              </p>
-            </CardContent>
-          </Card>
+        <h3 className="text-xl font-bold mt-6 mb-3">Stratification</h3>
+        <p className="leading-relaxed mb-4">
+          <strong>Stratified splitting</strong> preserves the class distribution in both train and test.
+          Critical for imbalanced datasets — a random split might put all rare-class examples in one set.
+          In sklearn: <code className="bg-muted px-1 rounded">train_test_split(X, y, stratify=y)</code>.
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">k-Fold Cross-Validation</h2>
+        <p className="leading-relaxed mb-4">
+          The gold standard for model evaluation. Split data into k folds (typically 5 or 10):
+        </p>
+        <div className="space-y-2 my-6">
+          <Card><CardContent className="p-3">
+            <p className="text-sm"><strong>Step 1:</strong> Divide data into k equal-sized folds</p>
+          </CardContent></Card>
+          <Card><CardContent className="p-3">
+            <p className="text-sm"><strong>Step 2:</strong> For each fold i: train on the other k−1 folds, evaluate on fold i</p>
+          </CardContent></Card>
+          <Card><CardContent className="p-3">
+            <p className="text-sm"><strong>Step 3:</strong> Average the k scores for the final estimate</p>
+          </CardContent></Card>
         </div>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Choosing K</h2>
-        <p className="leading-relaxed mb-4">
-          Common choices are K=5 or K=10. Larger K gives less biased estimates but higher variance and 
-          computational cost. Smaller K is faster but may have higher bias.
-        </p>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Best Practices</h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Always shuffle data before splitting (unless time series)</li>
-          <li>Use stratified splits for classification with imbalanced classes</li>
-          <li>Perform feature scaling within each fold to avoid data leakage</li>
-          <li>Report mean and standard deviation of cross-validation scores</li>
-          <li>Use nested cross-validation for hyperparameter tuning</li>
-        </ul>
-
         <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Master robust model evaluation techniques for reliable performance estimates.
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">Visual: 5-Fold Cross-Validation</h3>
+            <div className="space-y-1 text-xs font-mono">
+              <div className="flex gap-1">
+                <div className="flex-[4] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+                <div className="flex-1 p-1 bg-orange-200 dark:bg-orange-800 rounded text-center">Test</div>
+              </div>
+              <div className="flex gap-1">
+                <div className="flex-[3] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+                <div className="flex-1 p-1 bg-orange-200 dark:bg-orange-800 rounded text-center">Test</div>
+                <div className="flex-1 p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+              </div>
+              <div className="flex gap-1">
+                <div className="flex-[2] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+                <div className="flex-1 p-1 bg-orange-200 dark:bg-orange-800 rounded text-center">Test</div>
+                <div className="flex-[2] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+              </div>
+              <div className="flex gap-1">
+                <div className="flex-1 p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+                <div className="flex-1 p-1 bg-orange-200 dark:bg-orange-800 rounded text-center">Test</div>
+                <div className="flex-[3] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+              </div>
+              <div className="flex gap-1">
+                <div className="flex-1 p-1 bg-orange-200 dark:bg-orange-800 rounded text-center">Test</div>
+                <div className="flex-[4] p-1 bg-blue-200 dark:bg-blue-800 rounded text-center">Train</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Variants</h2>
+        <div className="grid gap-4 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Stratified k-Fold</h3>
+            <p className="text-sm text-muted-foreground">
+              Preserves class proportions in each fold. Essential for classification with imbalanced data.
             </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ K-Fold vs Stratified vs LOOCV comparison</li>
-              <li>✓ Nested cross-validation for tuning</li>
-              <li>✓ Handling time series data</li>
-              <li>✓ Statistical significance of results</li>
-            </ul>
-          </CardContent>
-        </Card>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Leave-One-Out (LOO)</h3>
+            <p className="text-sm text-muted-foreground">
+              k = n (each sample is its own test fold). Nearly unbiased but very expensive. Useful only for tiny datasets.
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Group k-Fold</h3>
+            <p className="text-sm text-muted-foreground">
+              Ensures that all samples from the same group (e.g., patient, time period) stay in the same fold.
+              Prevents data leakage when samples are correlated.
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Time Series Split</h3>
+            <p className="text-sm text-muted-foreground">
+              Respects temporal ordering: train on past, test on future. Never use random splits on time-dependent data.
+            </p>
+          </CardContent></Card>
+        </div>
 
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-3 rounded-lg border">
-              <p className="text-sm font-medium mb-2">5-Fold Cross-Validation Example</p>
-              <p className="text-xs text-muted-foreground mb-2">
-                Dataset: 1000 samples, 5-fold CV results: [0.85, 0.88, 0.82, 0.87, 0.86]
-              </p>
-              <div className="text-xs space-y-1 ml-2 mb-2">
-                <div><strong>Mean Accuracy:</strong> (0.85 + 0.88 + 0.82 + 0.87 + 0.86) / 5 = 85.6%</div>
-                <div><strong>Standard Deviation:</strong> 2.3%</div>
-                <div><strong>Report as:</strong> 85.6% ± 2.3%</div>
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                The standard deviation tells you about the stability of your model's performance.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-4 rounded-lg border">
-              <p className="text-sm font-medium mb-3">5-Fold Cross-Validation Process</p>
-              <div className="space-y-1 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-16 text-right font-medium">Fold 1:</div>
-                  <div className="w-12 p-1 bg-red-100 text-center">Test</div>
-                  <div className="flex-1 p-1 bg-green-100 text-center">Train | Train | Train | Train</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 text-right font-medium">Fold 2:</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-red-100 text-center">Test</div>
-                  <div className="flex-1 p-1 bg-green-100 text-center">Train | Train | Train</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 text-right font-medium">Fold 3:</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-red-100 text-center">Test</div>
-                  <div className="flex-1 p-1 bg-green-100 text-center">Train | Train</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 text-right font-medium">Fold 4:</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                  <div className="w-12 p-1 bg-red-100 text-center">Test</div>
-                  <div className="w-12 p-1 bg-green-100 text-center">Train</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 text-right font-medium">Fold 5:</div>
-                  <div className="flex-1 p-1 bg-green-100 text-center">Train | Train | Train | Train</div>
-                  <div className="w-12 p-1 bg-red-100 text-center">Test</div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="my-6 p-4 rounded-lg border border-red-500/20 bg-red-500/5">
+          <p className="text-sm font-medium mb-2">Data Leakage Warning</p>
+          <p className="text-sm text-muted-foreground">
+            <strong>Never</strong> tune hyperparameters on the test set. Each time you evaluate on test,
+            you leak test information into model selection. The test set must be touched only once —
+            for the final, honest evaluation.
+          </p>
+        </div>
 
         <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">Practical Guide</CardTitle></CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">K-Fold</span>
-                <span className="text-muted-foreground">Split data into K parts, rotate test set</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Stratified</span>
-                <span className="text-muted-foreground">Maintains class balance in each fold</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">LOOCV</span>
-                <span className="text-muted-foreground">Leave One Out - K = number of samples</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Nested CV</span>
-                <span className="text-muted-foreground">CV within CV for unbiased tuning</span>
-              </div>
+            <div className="grid gap-2 text-sm text-muted-foreground">
+              <p>• <strong>Large dataset ({'>'}100k):</strong> Single train/val/test split is sufficient</p>
+              <p>• <strong>Medium dataset (1k–100k):</strong> 5-fold or 10-fold CV</p>
+              <p>• <strong>Small dataset ({'<'}1k):</strong> LOO or repeated k-fold</p>
+              <p>• <strong>Time series:</strong> Expanding window or sliding window CV</p>
+              <p>• <strong>Imbalanced:</strong> Stratified k-fold, always</p>
             </div>
           </CardContent>
         </Card>
       </>
     )
   },
+
+  'hyperparameter-tuning': {
+    title: 'Hyperparameter Tuning',
+    estimatedTime: '20 min',
+    difficulty: 'advanced',
+    content: (
+      <>
+        <p className="text-lg leading-relaxed mb-6">
+          Model parameters are learned from data (weights, tree splits). <strong>Hyperparameters</strong>
+          are set before training: tree depth, learning rate, regularization strength, number of neighbors.
+          Choosing good hyperparameters is critical — and there are smart ways to do it.
+        </p>
+
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">The Setup</h3>
+            <p className="text-sm text-muted-foreground mb-2">
+              Split data into train/validation/test. For each hyperparameter combination: train on train,
+              evaluate on validation. After selecting the best combination, do final evaluation on test.
+            </p>
+            <div className="flex items-center gap-2 text-xs mt-2">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded">Train: learn parameters</div>
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded">Val: select hyperparams</div>
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded">Test: final evaluation</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Grid Search</h2>
+        <p className="leading-relaxed mb-4">
+          Define a set of values for each hyperparameter, then try <strong>every combination</strong>.
+          Simple, exhaustive, and trivially parallelizable.
+        </p>
+        <div className="my-6 p-4 rounded-lg border border-blue-500/20 bg-blue-500/5">
+          <p className="text-sm font-medium mb-1">Example: Tuning a Decision Tree</p>
+          <p className="text-xs text-muted-foreground">
+            max_depth: {'{'}3, 5, 7, 10{'}'} × criterion: {'{'}gini, entropy{'}'} × min_samples_leaf: {'{'}1, 5, 10{'}'}
+            = 4 × 2 × 3 = <strong>24 combinations</strong>
+          </p>
+        </div>
+        <p className="leading-relaxed mb-4">
+          <strong>Limitation:</strong> If the grid is large or training is slow, exhaustive search becomes
+          prohibitively expensive. Use <strong>log-scale</strong> grids for parameters like learning rate
+          (e.g., 0.001, 0.01, 0.1, 1.0).
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Random Search</h2>
+        <p className="leading-relaxed mb-4">
+          Instead of trying every combination, sample randomly from defined distributions for each
+          hyperparameter. Surprisingly effective:
+        </p>
+        <Card className="my-6 border-primary/20 bg-primary/5">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">Why Random Search Works Well</h3>
+            <p className="text-sm text-muted-foreground">
+              If you define the "best 5%" of hyperparameter space, random search finds at least one point
+              in this region with probability 1 − 0.95<sup>n</sup>. With just <strong>60 iterations</strong>,
+              you hit the top-5% with probability {'>'}95% — far fewer than exhaustive grid search.
+            </p>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Bayesian Optimization</h2>
+        <p className="leading-relaxed mb-4">
+          Uses results from previous iterations to decide where to search next. Two components:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <Card className="border-blue-500/20 bg-blue-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Surrogate Model</h3>
+            <p className="text-sm text-muted-foreground">
+              A probabilistic model (usually Gaussian Process) that approximates the validation metric
+              as a function of hyperparameters. Provides both mean prediction and uncertainty.
+            </p>
+          </CardContent></Card>
+          <Card className="border-orange-500/20 bg-orange-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Acquisition Function</h3>
+            <p className="text-sm text-muted-foreground">
+              Balances <strong>exploration</strong> (high uncertainty regions) vs.
+              <strong> exploitation</strong> (high predicted performance). Maximizing it selects the
+              next point to evaluate.
+            </p>
+          </CardContent></Card>
+        </div>
+
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">The Bayesian Optimization Loop</h3>
+            <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+              <li>Fit surrogate model to observed (hyperparameters, score) pairs</li>
+              <li>Maximize acquisition function to find next hyperparameters to try</li>
+              <li>Train model with these hyperparameters, evaluate on validation</li>
+              <li>Add result to observations, go to step 1</li>
+            </ol>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">TPE (Tree-structured Parzen Estimator)</h2>
+        <p className="leading-relaxed mb-4">
+          Used by the popular <strong>Hyperopt</strong> and <strong>Optuna</strong> libraries. After a warmup
+          phase (random search), TPE splits observed configurations into "good" (top 10-25%) and "bad" groups,
+          fits density estimators to each, and samples new candidates that maximize the ratio l(x)/g(x) —
+          favoring hyperparameters that look like previous winners.
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Comparison</h2>
+        <div className="overflow-x-auto my-6">
+          <table className="w-full text-sm border-collapse">
+            <thead><tr className="border-b bg-muted/50">
+              <th className="p-2 text-left">Method</th>
+              <th className="p-2 text-left">Uses History?</th>
+              <th className="p-2 text-left">Parallel?</th>
+              <th className="p-2 text-left">Best For</th>
+            </tr></thead>
+            <tbody>
+              <tr className="border-b"><td className="p-2 font-medium">Grid Search</td><td className="p-2 text-muted-foreground">No</td><td className="p-2 text-muted-foreground">Yes</td><td className="p-2 text-muted-foreground">Few params, parallel compute</td></tr>
+              <tr className="border-b"><td className="p-2 font-medium">Random Search</td><td className="p-2 text-muted-foreground">No</td><td className="p-2 text-muted-foreground">Yes</td><td className="p-2 text-muted-foreground">Many params, quick baseline</td></tr>
+              <tr className="border-b"><td className="p-2 font-medium">Bayesian Opt.</td><td className="p-2 text-muted-foreground">Yes</td><td className="p-2 text-muted-foreground">Limited</td><td className="p-2 text-muted-foreground">Expensive evaluations, few params</td></tr>
+              <tr className="border-b"><td className="p-2 font-medium">TPE</td><td className="p-2 text-muted-foreground">Yes</td><td className="p-2 text-muted-foreground">Limited</td><td className="p-2 text-muted-foreground">Mixed param types, tree-structured</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <Card className="my-6 border-purple-500/20 bg-purple-500/5">
+          <CardHeader><CardTitle className="text-lg">Libraries</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid gap-2 text-sm text-muted-foreground">
+              <p>• <strong>scikit-learn:</strong> GridSearchCV, RandomizedSearchCV</p>
+              <p>• <strong>Optuna:</strong> TPE, random search, pruning — most modern choice</p>
+              <p>• <strong>Hyperopt:</strong> TPE with tree-structured search spaces</p>
+              <p>• <strong>Scikit-Optimize:</strong> Bayesian optimization with Gaussian processes</p>
+            </div>
+          </CardContent>
+        </Card>
+      </>
+    )
+  },
+
   overfitting: {
     title: 'Overfitting & Underfitting',
+    estimatedTime: '12 min',
+    difficulty: 'beginner',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Finding the right balance between model complexity and generalization is one of the most important 
-          challenges in machine learning. Overfitting and underfitting represent two extremes of this balance.
-        </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">Understanding the Bias-Variance Tradeoff</h2>
-        <p className="leading-relaxed mb-4">
-          Every model has two sources of error:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li><strong>Bias:</strong> Error from overly simplistic assumptions</li>
-          <li><strong>Variance:</strong> Error from sensitivity to small fluctuations in training data</li>
-        </ul>
-        <p className="leading-relaxed mb-4">
-          The goal is to find the sweet spot where total error (bias + variance) is minimized.
+          Overfitting occurs when a model memorizes training data instead of learning general patterns.
+          Underfitting occurs when a model is too simple to capture the underlying relationship.
+          The goal is to find the sweet spot between them.
         </p>
 
-        <Card className="my-6 bg-accent/50 border-accent">
-          <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">The Goldilocks Principle</h3>
-            <p className="text-sm text-muted-foreground">
-              You want a model that's "just right" - not too simple (underfitting) and not too complex 
-              (overfitting). It should capture patterns without memorizing noise.
-            </p>
-          </CardContent>
-        </Card>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Underfitting (High Bias)</h2>
-        <p className="leading-relaxed mb-4">
-          Underfitting occurs when a model is too simple to capture the underlying pattern in the data.
-        </p>
-        <div className="bg-muted p-4 rounded-lg mb-6">
-          <h4 className="font-semibold mb-2">Signs of Underfitting:</h4>
-          <ul className="text-sm space-y-1">
-            <li>• Poor performance on both training and test data</li>
-            <li>• Training and validation errors are both high</li>
-            <li>• Gap between training and validation error is small</li>
-          </ul>
-        </div>
-        <p className="leading-relaxed mb-4"><strong>Solutions:</strong></p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Increase model complexity (more features, deeper network)</li>
-          <li>Reduce regularization</li>
-          <li>Train for more epochs</li>
-          <li>Add relevant features</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Overfitting (High Variance)</h2>
-        <p className="leading-relaxed mb-4">
-          Overfitting occurs when a model learns the training data too well, including its noise and outliers,
-          resulting in poor generalization to new data.
-        </p>
-        <div className="bg-muted p-4 rounded-lg mb-6">
-          <h4 className="font-semibold mb-2">Signs of Overfitting:</h4>
-          <ul className="text-sm space-y-1">
-            <li>• Excellent performance on training data</li>
-            <li>• Poor performance on test/validation data</li>
-            <li>• Large gap between training and validation error</li>
-          </ul>
-        </div>
-        <p className="leading-relaxed mb-4"><strong>Solutions:</strong></p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Get more training data</li>
-          <li>Reduce model complexity</li>
-          <li>Add regularization (L1, L2, Dropout)</li>
-          <li>Use cross-validation</li>
-          <li>Feature selection to remove irrelevant features</li>
-          <li>Early stopping during training</li>
-          <li>Data augmentation</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Detecting Overfitting</h2>
-        <p className="leading-relaxed mb-4">
-          Monitor training and validation curves during model development:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>If both curves plateau at similar low error → Good fit</li>
-          <li>If training error keeps decreasing but validation error increases → Overfitting</li>
-          <li>If both curves plateau at high error → Underfitting</li>
-        </ul>
-
-        <Card className="my-6 bg-accent/50 border-accent">
-          <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">Learning Curves</h3>
-            <p className="text-sm text-muted-foreground">
-              Plot training and validation error against training set size or epochs. These curves help 
-              diagnose whether you need more data, a simpler model, or different regularization.
-            </p>
-          </CardContent>
-        </Card>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Regularization Techniques</h2>
-        <p className="leading-relaxed mb-4">
-          Regularization adds constraints to prevent overfitting:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li><strong>L1 (Lasso):</strong> Adds absolute value of coefficients as penalty. Can zero out features.</li>
-          <li><strong>L2 (Ridge):</strong> Adds squared magnitude of coefficients. Shrinks weights evenly.</li>
-          <li><strong>Elastic Net:</strong> Combines L1 and L2 penalties</li>
-          <li><strong>Dropout:</strong> Randomly drops neurons during training (for neural networks)</li>
-        </ul>
-
-        <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Master the balance between bias and variance for optimal model performance.
-            </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ Bias-variance tradeoff mathematics</li>
-              <li>✓ Regularization techniques deep dive</li>
-              <li>✓ Early stopping strategies</li>
-              <li>✓ Model complexity selection</li>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Diagnosing the Problem</h2>
+        <div className="grid gap-4 my-6">
+          <Card className="border-red-500/20 bg-red-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Overfitting (High Variance)</h3>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Excellent training performance, poor validation/test performance</li>
+              <li>• Large gap between train and validation loss</li>
+              <li>• Causes: model too complex, too few data points, insufficient regularization</li>
             </ul>
-          </CardContent>
-        </Card>
+          </CardContent></Card>
+          <Card className="border-orange-500/20 bg-orange-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Underfitting (High Bias)</h3>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Poor performance on both training and test data</li>
+              <li>• Training loss plateaus at a high value</li>
+              <li>• Causes: model too simple, features not informative, too much regularization</li>
+            </ul>
+          </CardContent></Card>
+        </div>
 
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-3 rounded-lg border">
-              <p className="text-sm font-medium mb-2">Diagnose the Problem</p>
-              <p className="text-xs text-muted-foreground mb-2">
-                Model performance after 100 epochs:
-              </p>
-              <div className="text-xs space-y-1 ml-2 mb-2">
-                <div>• Training accuracy: 99%</div>
-                <div>• Validation accuracy: 75%</div>
-                <div>• Training loss: 0.05</div>
-                <div>• Validation loss: 1.2</div>
-              </div>
-              <p className="text-xs font-medium mb-1">What's the issue and how to fix it?</p>
-              <p className="text-xs text-muted-foreground italic">
-                Answer: Clear overfitting. Try: dropout (0.5), L2 regularization, reduce model size, or get more data.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Learning Curves</h2>
+        <p className="leading-relaxed mb-4">
+          Plot training and validation error as a function of training set size (or epochs).
+          Learning curves are the most diagnostic tool for identifying overfitting vs underfitting.
+        </p>
 
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-4 rounded-lg border">
-              <p className="text-sm font-medium mb-3">Model Complexity vs Error</p>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Underfitting:</div>
-                  <div className="flex-1 p-2 bg-yellow-100 rounded">High bias, low variance</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Good Fit:</div>
-                  <div className="flex-1 p-2 bg-green-100 rounded">Balanced bias and variance</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Overfitting:</div>
-                  <div className="flex-1 p-2 bg-red-100 rounded">Low bias, high variance</div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Solutions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Fight Overfitting</h3>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>• Add more training data</li>
+              <li>• Simplify the model (fewer params, shallower trees)</li>
+              <li>• Add regularization (L1, L2, dropout)</li>
+              <li>• Use cross-validation</li>
+              <li>• Feature selection / dimensionality reduction</li>
+              <li>• Early stopping</li>
+            </ul>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-2">Fight Underfitting</h3>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>• Use a more complex model</li>
+              <li>• Add more informative features</li>
+              <li>• Reduce regularization strength</li>
+              <li>• Train longer (more epochs/iterations)</li>
+              <li>• Feature engineering / interactions</li>
+            </ul>
+          </CardContent></Card>
+        </div>
 
-        <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 text-sm">
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Overfitting</span>
-                <span className="text-muted-foreground">Model memorizes training data, poor generalization</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Underfitting</span>
-                <span className="text-muted-foreground">Model too simple to capture patterns</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Regularization</span>
-                <span className="text-muted-foreground">Techniques to prevent overfitting</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Early Stopping</span>
-                <span className="text-muted-foreground">Stop training before overfitting occurs</span>
-              </div>
-            </div>
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">The Bias-Variance Tradeoff</h3>
+            <p className="text-sm text-muted-foreground">
+              As model complexity increases, bias decreases (model fits training data better) but
+              variance increases (model becomes more sensitive to specific training samples).
+              The optimal complexity minimizes total error = bias² + variance + noise.
+              Ensemble methods (Chapter 2.5) are designed to break this tradeoff.
+            </p>
           </CardContent>
         </Card>
       </>

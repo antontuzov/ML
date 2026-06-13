@@ -3,186 +3,128 @@ import { Article } from './types'
 
 export const neuralArticles: Record<string, Article> = {
   basics: {
-    title: 'Neural Network Basics',
+    title: 'Neural Networks',
+    estimatedTime: '18 min',
+    difficulty: 'intermediate',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Neural networks are computing systems inspired by biological neural networks in the human brain. 
-          They consist of interconnected nodes (neurons) that process information and learn from data 
-          through adjustment of connection strengths (weights).
-        </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">The Biological Inspiration</h2>
-        <p className="leading-relaxed mb-4">
-          Just as biological neurons receive signals through dendrites, process them, and transmit outputs 
-          through axons, artificial neurons receive inputs, apply weights and biases, pass through an 
-          activation function, and produce outputs.
+          Neural networks are parameterized compositions of differentiable functions. They learn hierarchical
+          representations of data by stacking simple transformations — each layer extracts increasingly
+          abstract features from the input.
         </p>
 
-        <Card className="my-6 bg-accent/50 border-accent">
+        <h2 className="text-2xl font-bold mt-8 mb-4">The Artificial Neuron</h2>
+        <p className="leading-relaxed mb-4">
+          Each neuron performs an affine transformation followed by a non-linear activation:
+        </p>
+        <Card className="my-6 border-primary/20 bg-primary/5">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">Key Components of a Neuron</h3>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• <strong>Inputs:</strong> Data features or outputs from previous layer</li>
-              <li>• <strong>Weights:</strong> Importance assigned to each input</li>
-              <li>• <strong>Bias:</strong> Threshold adjustment for activation</li>
-              <li>• <strong>Activation Function:</strong> Determines if neuron fires</li>
-              <li>• <strong>Output:</strong> Result passed to next layer</li>
-            </ul>
+            <p className="text-center font-mono text-sm mb-2">
+              y = σ(w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> + ... + w<sub>n</sub>x<sub>n</sub> + b) = σ(w<sup>T</sup>x + b)
+            </p>
+            <p className="text-center text-xs text-muted-foreground">
+              where σ is the activation function, w are weights, b is bias
+            </p>
           </CardContent>
         </Card>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">How a Single Neuron Works</h2>
-        <p className="leading-relaxed mb-4">
-          Each neuron performs a weighted sum of its inputs, adds a bias term, and applies an activation 
-          function:
-        </p>
-        <div className="bg-muted p-4 rounded-lg mb-6 font-mono text-sm">
-          output = activation(weights · inputs + bias)
-        </div>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Common Activation Functions</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Activation Functions</h2>
         <div className="grid gap-4 my-6">
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Sigmoid</h3>
-              <p className="text-sm text-muted-foreground">
-                Squashes values between 0 and 1. Useful for binary classification but suffers from vanishing gradient.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
               <h3 className="font-semibold mb-2">ReLU (Rectified Linear Unit)</h3>
-              <p className="text-sm text-muted-foreground">
-                Returns 0 for negative inputs, identity for positive. Most popular choice due to simplicity and effectiveness.
+              <p className="text-sm text-muted-foreground mb-1">
+                σ(z) = max(0, z). The default choice for hidden layers. Simple, fast, and avoids
+                vanishing gradients for positive inputs.
+              </p>
+              <p className="text-xs text-muted-foreground italic">
+                Derivative: 1 for z {'>'} 0, 0 for z {'<'} 0
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Tanh</h3>
-              <p className="text-sm text-muted-foreground">
-                Similar to sigmoid but ranges from -1 to 1. Zero-centered, which can help with training.
+              <h3 className="font-semibold mb-2">Sigmoid</h3>
+              <p className="text-sm text-muted-foreground mb-1">
+                σ(z) = 1/(1+e<sup>-z</sup>). Outputs in (0,1). Used for binary classification output
+                and gating mechanisms.
+              </p>
+              <p className="text-xs text-muted-foreground italic">
+                Suffers from vanishing gradients — derivative is σ(z)(1−σ(z)) {'≤'} 0.25
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
               <h3 className="font-semibold mb-2">Softmax</h3>
-              <p className="text-sm text-muted-foreground">
-                Converts outputs to probabilities that sum to 1. Used in multi-class classification.
+              <p className="text-sm text-muted-foreground mb-1">
+                σ(z)<sub>i</sub> = e<sup>z<sub>i</sub></sup> / Σ<sub>j</sub> e<sup>z<sub>j</sub></sup>. Converts logits to a probability
+                distribution. Used in multi-class classification.
+              </p>
+              <p className="text-xs text-muted-foreground italic">
+                Backward pass: ∂σ<sub>i</sub>/∂z<sub>j</sub> = σ<sub>i</sub>(δ<sub>ij</sub> − σ<sub>j</sub>)
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">GELU (Gaussian Error Linear Unit)</h3>
+              <p className="text-sm text-muted-foreground mb-1">
+                σ(z) = z · Φ(z), where Φ is the standard normal CDF. Used in Transformers (BERT, GPT).
+                Smoother than ReLU, allows small negative values through.
               </p>
             </CardContent>
           </Card>
         </div>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">The Power of Layers</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Why Non-Linearity Matters</h2>
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">The Key Insight</h3>
+            <p className="text-sm text-muted-foreground">
+              Without non-linear activations, a neural network of any depth collapses to a single linear
+              transformation: W<sub>2</sub> · W<sub>1</sub> · x = W<sub>combined</sub> · x. Non-linearities allow the
+              network to approximate arbitrarily complex functions.
+            </p>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Universal Approximation Theorem</h2>
         <p className="leading-relaxed mb-4">
-          By stacking multiple layers of neurons, neural networks can learn hierarchical representations 
-          of data. Early layers capture simple patterns, while deeper layers combine these into complex 
-          features.
+          A feedforward network with a single hidden layer of finite width can approximate any continuous
+          function on a compact subset of ℝ<sup>n</sup> to arbitrary accuracy, given suitable activation
+          functions (Cybenko 1989, Hornik 1991). However, this theorem doesn't tell us:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-6">
+          <li>How to <strong>find</strong> the right weights (optimization)</li>
+          <li>How many neurons are needed (may be exponentially large)</li>
+          <li>Whether the network will <strong>generalize</strong> to unseen data</li>
+        </ul>
+        <p className="leading-relaxed mb-4">
+          In practice, <strong>deep</strong> networks (many layers) are far more parameter-efficient than
+          wide shallow ones for the functions we actually want to learn.
         </p>
 
-        <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Foundation of deep learning - understand how artificial neurons mimic biological brains.
-            </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ Biological vs artificial neurons</li>
-              <li>✓ Activation function mathematics</li>
-              <li>✓ Weight initialization strategies</li>
-              <li>✓ Forward propagation mechanics</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-3 rounded-lg border">
-              <p className="text-sm font-medium mb-2">Calculate Neuron Output</p>
-              <p className="text-xs text-muted-foreground mb-2">
-                Given: Inputs = [0.5, 0.8], Weights = [0.3, 0.7], Bias = 0.1, Activation = ReLU
-              </p>
-              <div className="text-xs space-y-1 ml-2 mb-2">
-                <div>1. Weighted sum = (0.5 × 0.3) + (0.8 × 0.7) + 0.1</div>
-                <div>2. Weighted sum = 0.15 + 0.56 + 0.1 = 0.81</div>
-                <div>3. ReLU(0.81) = max(0, 0.81) = 0.81</div>
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                Try: What if bias was -1.0? Answer: ReLU(-0.19) = 0 (neuron doesn't fire)
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="bg-background p-4 rounded-lg border">
-                <p className="text-sm font-medium mb-3">Activation Function Comparison</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2 bg-muted rounded">
-                    <strong>Sigmoid</strong><br/>
-                    <span className="text-muted-foreground">S-curve, 0 to 1</span>
-                  </div>
-                  <div className="p-2 bg-muted rounded">
-                    <strong>ReLU</strong><br/>
-                    <span className="text-muted-foreground">0 for negative, linear for positive</span>
-                  </div>
-                  <div className="p-2 bg-muted rounded">
-                    <strong>Tanh</strong><br/>
-                    <span className="text-muted-foreground">S-curve, -1 to 1</span>
-                  </div>
-                  <div className="p-2 bg-muted rounded">
-                    <strong>Softmax</strong><br/>
-                    <span className="text-muted-foreground">Probability distribution</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">⚡ Quick Reference</CardTitle></CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
+            <div className="grid gap-2 text-sm">
               <div className="flex items-start gap-2">
                 <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Neuron</span>
-                <span className="text-muted-foreground">Basic computational unit that processes inputs</span>
+                <span className="text-muted-foreground">σ(w<sup>T</sup>x + b) — weighted sum + activation</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Weight</span>
-                <span className="text-muted-foreground">Importance/strength of a connection</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">ReLU</span>
+                <span className="text-muted-foreground">max(0, z) — default activation for hidden layers</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Bias</span>
-                <span className="text-muted-foreground">Threshold adjustment for activation</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Softmax</span>
+                <span className="text-muted-foreground">Probability distribution over classes</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Epoch</span>
-                <span className="text-muted-foreground">One complete pass through training data</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">UAT</span>
+                <span className="text-muted-foreground">Neural nets can approximate any continuous function</span>
               </div>
             </div>
           </CardContent>
@@ -190,174 +132,111 @@ export const neuralArticles: Record<string, Article> = {
       </>
     )
   },
+
   architecture: {
-    title: 'Network Architecture',
+    title: 'Fully Connected Networks',
+    estimatedTime: '16 min',
+    difficulty: 'intermediate',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Neural network architecture refers to how neurons are organized into layers and connected. 
-          Different architectures are suited for different types of problems and data.
+          Fully connected (dense) neural networks are the foundation of deep learning. Every neuron in layer
+          ℓ connects to every neuron in layer ℓ+1, enabling the network to learn arbitrary feature combinations.
         </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">Layer Types</h2>
-        <div className="space-y-4 my-6">
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Input Layer</h3>
-              <p className="text-sm text-muted-foreground">
-                Receives raw data features. Number of neurons equals the number of input features.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Hidden Layers</h3>
-              <p className="text-sm text-muted-foreground">
-                Intermediate layers that extract features and learn representations. Deep networks have many hidden layers.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Output Layer</h3>
-              <p className="text-sm text-muted-foreground">
-                Produces final predictions. Structure depends on the task (single neuron for regression, multiple for classification).
-              </p>
-            </CardContent>
-          </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Network Structure</h2>
+        <div className="space-y-3 my-6">
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Forward Pass</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              For an L-layer network, the computation at each layer is:
+            </p>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block">
+              h<sup>(ℓ)</sup> = σ<sub>ℓ</sub>(W<sup>(ℓ)</sup> h<sup>(ℓ-1)</sup> + b<sup>(ℓ)</sup>)
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              where h<sup>(0)</sup> = x (input), W<sup>(ℓ)</sup> ∈ ℝ<sup>d<sub>ℓ</sub> × d<sub>ℓ-1</sub></sup>, and σ<sub>ℓ</sub> is the activation function
+            </p>
+          </CardContent></Card>
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Parameter Count</h3>
+            <p className="text-sm text-muted-foreground">
+              Total parameters = Σ<sub>ℓ=1</sub><sup>L</sup> (d<sub>ℓ</sub> · d<sub>ℓ-1</sub> + d<sub>ℓ</sub>).
+              For a network with layers [784, 256, 128, 10]: (784×256 + 256) + (256×128 + 128) + (128×10 + 10) = 233,866 parameters.
+            </p>
+          </CardContent></Card>
         </div>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Feedforward Neural Networks</h2>
-        <p className="leading-relaxed mb-4">
-          In feedforward networks, information flows in one direction from input to output. There are no 
-          cycles or loops. This is the simplest architecture and forms the basis for more complex networks.
-        </p>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Depth vs Width</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <Card className="border-blue-500/20 bg-blue-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Deep & Narrow</h3>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Learns hierarchical features</li>
+              <li>• More parameter-efficient</li>
+              <li>• Better compositionality</li>
+              <li>• Harder to train (vanishing gradients)</li>
+            </ul>
+          </CardContent></Card>
+          <Card className="border-orange-500/20 bg-orange-500/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-2 text-orange-600 dark:text-orange-400">Shallow & Wide</h3>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Universal approximation (theoretically)</li>
+              <li>• Exponentially many neurons needed</li>
+              <li>• Easier to optimize</li>
+              <li>• Poor feature hierarchy</li>
+            </ul>
+          </CardContent></Card>
+        </div>
 
         <Card className="my-6 bg-accent/50 border-accent">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">Universal Approximation Theorem</h3>
-            <p className="text-sm text-muted-foreground">
-              A feedforward network with a single hidden layer containing a finite number of neurons can 
-              approximate any continuous function, given appropriate activation functions and sufficient neurons.
-            </p>
+            <h3 className="font-semibold mb-2">Practical Architecture Design</h3>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>• <strong>Start simple:</strong> 2-3 hidden layers with 128-512 neurons each</p>
+              <p>• <strong>Scale up:</strong> Add layers before adding width (depth {'>'} width)</p>
+              <p>• <strong>Use skip connections:</strong> ResNet-style blocks help gradient flow</p>
+              <p>• <strong>Batch normalization:</strong> After linear layer, before activation</p>
+              <p>• <strong>Dropout:</strong> 0.1-0.5 rate for regularization</p>
+            </div>
           </CardContent>
         </Card>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Deep vs. Shallow Networks</h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li><strong>Shallow Networks:</strong> One or two hidden layers. Simpler but limited capacity.</li>
-          <li><strong>Deep Networks:</strong> Many hidden layers. Can learn complex hierarchical features but harder to train.</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Design Considerations</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Weight Initialization</h2>
         <p className="leading-relaxed mb-4">
-          When designing network architecture, consider:
+          Proper initialization is critical — poor initialization leads to vanishing or exploding gradients.
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Number of layers (depth)</li>
-          <li>Number of neurons per layer (width)</li>
-          <li>Type of connections (fully connected, sparse, etc.)</li>
-          <li>Activation functions for each layer</li>
-          <li>Regularization techniques to prevent overfitting</li>
-        </ul>
-
-        <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Design effective neural network architectures for different problem types.
+        <div className="grid gap-4 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Xavier/Glorot (for sigmoid/tanh)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block">
+              W ~ N(0, 2/(d<sub>in</sub> + d<sub>out</sub>))
             </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ Layer configuration strategies</li>
-              <li>✓ Network depth vs width trade-offs</li>
-              <li>✓ Connectivity patterns and their effects</li>
-              <li>✓ Architecture search techniques</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-3 rounded-lg border">
-              <p className="text-sm font-medium mb-2">Design a Network</p>
-              <p className="text-xs text-muted-foreground mb-2">
-                Task: Classify 28×28 grayscale images into 10 digit classes (0-9).
-              </p>
-              <div className="text-xs space-y-1 ml-2 mb-2">
-                <div><strong>Input:</strong> 784 features (28×28 pixels flattened)</div>
-                <div><strong>Output:</strong> 10 classes (softmax)</div>
-                <div><strong>Hidden:</strong> What architecture would you choose?</div>
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                Tip: For image data, consider CNN architecture instead of fully connected layers.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-4 rounded-lg border">
-              <p className="text-sm font-medium mb-3">Network Architecture Types</p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2 bg-primary/10 rounded">
-                  <strong>Fully Connected</strong><br/>
-                  <span className="text-muted-foreground">Every neuron connected to all in next layer</span>
-                </div>
-                <div className="p-2 bg-primary/10 rounded">
-                  <strong>Convolutional</strong><br/>
-                  <span className="text-muted-foreground">Local connections, shared weights</span>
-                </div>
-                <div className="p-2 bg-primary/10 rounded">
-                  <strong>Recurrent</strong><br/>
-                  <span className="text-muted-foreground">Feedback loops for sequences</span>
-                </div>
-                <div className="p-2 bg-primary/10 rounded">
-                  <strong>Skip Connections</strong><br/>
-                  <span className="text-muted-foreground">Bypass layers (ResNet)</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">He/Kaiming (for ReLU)</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block">
+              W ~ N(0, 2/d<sub>in</sub>)
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Accounts for ReLU halving the variance (only positive activations pass through)</p>
+          </CardContent></Card>
+        </div>
 
         <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">⚡ Quick Reference</CardTitle></CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
+            <div className="grid gap-2 text-sm">
+              <div className="flex items-start gap-2">
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">FC Layer</span>
+                <span className="text-muted-foreground">h = σ(Wx + b), fully connected transformation</span>
+              </div>
               <div className="flex items-start gap-2">
                 <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Depth</span>
-                <span className="text-muted-foreground">Number of layers in the network</span>
+                <span className="text-muted-foreground">More layers = hierarchical feature learning</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Width</span>
-                <span className="text-muted-foreground">Number of neurons per layer</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Parameters</span>
-                <span className="text-muted-foreground">Total weights and biases to learn</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Capacity</span>
-                <span className="text-muted-foreground">Model's ability to learn complex patterns</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">He Init</span>
+                <span className="text-muted-foreground">N(0, 2/d<sub>in</sub>) — standard for ReLU networks</span>
               </div>
             </div>
           </CardContent>
@@ -365,184 +244,297 @@ export const neuralArticles: Record<string, Article> = {
       </>
     )
   },
-  training: {
-    title: 'Training Techniques',
+
+  backprop: {
+    title: 'Backpropagation',
+    estimatedTime: '18 min',
+    difficulty: 'advanced',
     content: (
       <>
         <p className="text-lg leading-relaxed mb-6">
-          Training neural networks involves adjusting weights and biases to minimize the difference between 
-          predicted and actual outputs. This process requires careful selection of algorithms, hyperparameters, 
-          and optimization strategies.
+          Neural networks are trained via gradient descent, which requires computing gradients of the loss
+          with respect to every weight. <strong>Backpropagation</strong> (Rumelhart, Hinton & Williams, 1986)
+          makes this efficient by reusing intermediate computations in a single backward pass.
         </p>
-        
-        <h2 className="text-2xl font-bold mt-8 mb-4">Backpropagation</h2>
-        <p className="leading-relaxed mb-4">
-          Backpropagation is the fundamental algorithm for training neural networks. It calculates gradients 
-          of the loss function with respect to each weight by applying the chain rule of calculus, working 
-          backward from the output layer.
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mb-6">
-          <li>Forward pass: Compute predictions</li>
-          <li>Calculate loss: Measure prediction error</li>
-          <li>Backward pass: Compute gradients</li>
-          <li>Update weights: Adjust parameters using gradients</li>
-        </ol>
 
-        <Card className="my-6 bg-accent/50 border-accent">
+        <h2 className="text-2xl font-bold mt-8 mb-4">The Core Idea</h2>
+        <p className="leading-relaxed mb-4">
+          Backpropagation is simply the chain rule of calculus applied systematically to a computational
+          graph. If y = f(g(x)), then:
+        </p>
+        <Card className="my-6 border-primary/20 bg-primary/5">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">Gradient Descent Variants</h3>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• <strong>Batch GD:</strong> Uses entire dataset for each update (slow but stable)</li>
-              <li>• <strong>Stochastic GD:</strong> Uses one sample per update (fast but noisy)</li>
-              <li>• <strong>Mini-batch GD:</strong> Uses small batches (best of both worlds)</li>
-            </ul>
+            <p className="text-center font-mono text-sm mb-2">
+              ∂y/∂x = (∂y/∂g) · (∂g/∂x)
+            </p>
+            <p className="text-center text-xs text-muted-foreground">
+              Compute gradients backward through the network, one layer at a time
+            </p>
           </CardContent>
         </Card>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Optimization Algorithms</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-4">The Algorithm</h2>
+        <div className="space-y-2 my-6">
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Step 1: Forward Pass</h3>
+            <p className="text-sm text-muted-foreground">
+              Compute and <strong>store</strong> all intermediate activations: h<sup>(0)</sup>, h<sup>(1)</sup>, ..., h<sup>(L)</sup>.
+              These are needed during the backward pass.
+            </p>
+          </CardContent></Card>
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Step 2: Compute Output Gradient</h3>
+            <p className="text-sm text-muted-foreground">
+              δ<sup>(L)</sup> = ∂L/∂h<sup>(L)</sup> — gradient of loss with respect to network output.
+            </p>
+          </CardContent></Card>
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Step 3: Backward Pass</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              For each layer ℓ from L down to 1:
+            </p>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block">
+              δ<sup>(ℓ-1)</sup> = (W<sup>(ℓ)</sup>)<sup>T</sup> δ<sup>(ℓ)</sup> ⊙ σ'(z<sup>(ℓ-1)</sup>)
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Propagate gradients backward, applying the chain rule at each layer
+            </p>
+          </CardContent></Card>
+          <Card className="border-primary/20 bg-primary/5"><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Step 4: Compute Weight Gradients</h3>
+            <p className="font-mono text-xs bg-muted px-2 py-1 rounded inline-block">
+              ∂L/∂W<sup>(ℓ)</sup> = δ<sup>(ℓ)</sup> (h<sup>(ℓ-1)</sup>)<sup>T</sup>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              These gradients are used to update weights via SGD or Adam
+            </p>
+          </CardContent></Card>
+        </div>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Gradients for Common Layers</h2>
+        <div className="space-y-3 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Element-wise activation: y = σ(x)</h3>
+            <p className="text-sm text-muted-foreground">
+              Gradient transforms as: δ<sub>in</sub> = δ<sub>out</sub> ⊙ σ'(x), where ⊙ is element-wise multiplication.
+              For ReLU: δ<sub>in</sub> = δ<sub>out</sub> ⊙ [x {'>'} 0].
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Linear layer: y = Wx + b</h3>
+            <p className="text-sm text-muted-foreground">
+              δ<sub>in</sub> = W<sup>T</sup> δ<sub>out</sub>, and ∂L/∂W = δ<sub>out</sub> x<sup>T</sup>, ∂L/∂b = δ<sub>out</sub>
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Softmax + Cross-Entropy</h3>
+            <p className="text-sm text-muted-foreground">
+              The gradient simplifies beautifully: δ = p − y, where p is the predicted probability
+              vector and y is the one-hot target. No need to compute the Jacobian explicitly.
+            </p>
+          </CardContent></Card>
+        </div>
+
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">💡 Why Not Compute Gradients Directly?</h3>
+            <p className="text-sm text-muted-foreground">
+              Naively computing ∂L/∂W for each weight independently requires O(n²) operations for
+              n parameters. Backpropagation computes <em>all</em> gradients in O(n) operations —
+              just one forward pass and one backward pass, regardless of network size. This is the
+              same cost as two forward passes.
+            </p>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Automatic Differentiation (Autograd)</h2>
+        <p className="leading-relaxed mb-4">
+          Modern frameworks (PyTorch, JAX, TensorFlow) implement backpropagation automatically. Each layer
+          only needs to know:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-6">
+          <li>How to transform input → output (forward pass)</li>
+          <li>How to transform δ<sub>out</sub> → δ<sub>in</sub> (backward pass)</li>
+          <li>How to compute ∂L/∂W given δ<sub>out</sub> and the stored input</li>
+        </ul>
+        <p className="leading-relaxed mb-4">
+          Layers are assembled like Lego bricks — the framework handles the chain rule mechanically.
+          This makes neural network code remarkably clean compared to, say, gradient boosting implementations.
+        </p>
+
+        <Card className="my-6 border-purple-500/20 bg-purple-500/5">
+          <CardHeader><CardTitle className="text-lg">⚡ Quick Reference</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid gap-2 text-sm">
+              <div className="flex items-start gap-2">
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Backprop</span>
+                <span className="text-muted-foreground">Chain rule applied layer-by-layer, backward</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">δ (delta)</span>
+                <span className="text-muted-foreground">Gradient flowing backward through the network</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Autograd</span>
+                <span className="text-muted-foreground">Automatic differentiation — you write forward, framework does backward</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">O(n)</span>
+                <span className="text-muted-foreground">Cost of all gradients = 2× forward pass cost</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </>
+    )
+  },
+
+  training: {
+    title: 'Training Techniques',
+    estimatedTime: '16 min',
+    difficulty: 'intermediate',
+    content: (
+      <>
+        <p className="text-lg leading-relaxed mb-6">
+          Computing gradients via backpropagation is only half the battle. The other half is choosing
+          how to use those gradients to update weights effectively. This section covers optimization
+          algorithms and training stabilization techniques.
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8 mb-4">Gradient Descent Variants</h2>
         <div className="grid gap-4 my-6">
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">SGD (Stochastic Gradient Descent)</h3>
+              <h3 className="font-semibold mb-2">Batch GD</h3>
               <p className="text-sm text-muted-foreground">
-                Basic optimizer that updates weights using gradient and learning rate.
+                Uses the entire dataset for each update. Stable convergence but computationally expensive
+                for large datasets. Rarely used in practice for deep learning.
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Adam</h3>
+              <h3 className="font-semibold mb-2">Stochastic GD (SGD)</h3>
               <p className="text-sm text-muted-foreground">
-                Adaptive optimizer that combines momentum and RMSProp. Most popular choice for deep learning.
+                One sample per update. Extremely noisy but can escape local minima. With momentum,
+                becomes a strong baseline optimizer.
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">RMSprop</h3>
+              <h3 className="font-semibold mb-2">Mini-batch SGD</h3>
               <p className="text-sm text-muted-foreground">
-                Adapts learning rate for each parameter based on recent gradients.
+                Batches of 32-512 samples. Best of both worlds — reduces noise while leveraging GPU
+                parallelism. The standard for deep learning.
               </p>
             </CardContent>
           </Card>
         </div>
 
-        <h2 className="text-2xl font-bold mt-8 mb-4">Learning Rate</h2>
-        <p className="leading-relaxed mb-4">
-          The learning rate controls how much weights change during each update. Too high, and training 
-          diverges; too low, and training is slow. Learning rate schedules gradually decrease the rate 
-          during training.
-        </p>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Regularization Techniques</h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li><strong>Dropout:</strong> Randomly deactivate neurons during training to prevent co-adaptation</li>
-          <li><strong>L1/L2 Regularization:</strong> Add penalty terms to loss function to keep weights small</li>
-          <li><strong>Batch Normalization:</strong> Normalize layer inputs to stabilize training</li>
-          <li><strong>Early Stopping:</strong> Stop training when validation performance stops improving</li>
-          <li><strong>Data Augmentation:</strong> artificially increase training data variety</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold mt-8 mb-4">Best Practices</h2>
-        <p className="leading-relaxed mb-4">
-          Start with simple architectures, use proper weight initialization, monitor training and validation 
-          curves, experiment with different optimizers, and use cross-validation to ensure generalization.
-        </p>
-
-        <Card className="my-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📚 Comprehensive Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Master the art and science of training neural networks effectively.
+        <h2 className="text-2xl font-bold mt-8 mb-4">Optimization Algorithms</h2>
+        <div className="space-y-3 my-6">
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">SGD + Momentum</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              v<sub>t</sub> = βv<sub>t-1</sub> + (1−β)g<sub>t</sub>, then θ ← θ − ηv<sub>t</sub>
             </p>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ Backpropagation mathematics</li>
-              <li>✓ Optimizer comparison and selection</li>
-              <li>✓ Hyperparameter tuning strategies</li>
-              <li>✓ Training debugging techniques</li>
-            </ul>
-          </CardContent>
-        </Card>
+            <p className="text-xs text-muted-foreground">
+              Accumulates velocity in consistent gradient directions. β=0.9 is standard.
+              Helps escape saddle points and ravines.
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Adam (Adaptive Moment Estimation)</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              Combines momentum (1st moment) with RMSProp (2nd moment): adapts learning rate per-parameter.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Default choice for most deep learning tasks. β<sub>1</sub>=0.9, β<sub>2</sub>=0.999, η=1e-3 or 3e-4.
+              Use AdamW (decoupled weight decay) for better generalization.
+            </p>
+          </CardContent></Card>
+          <Card><CardContent className="p-4">
+            <h3 className="font-semibold mb-1">Learning Rate Schedules</h3>
+            <p className="text-sm text-muted-foreground">
+              Warmup → constant → cosine decay. Start with small LR, ramp up, then decay smoothly.
+              Critical for training large models and transformers.
+            </p>
+          </CardContent></Card>
+        </div>
 
-        <Card className="my-6 border-blue-500/20 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🎯 Interactive Learning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-3 rounded-lg border">
-              <p className="text-sm font-medium mb-2">Training Scenario</p>
-              <p className="text-xs text-muted-foreground mb-2">
-                Your neural network has low training loss but high validation loss. What's happening?
+        <h2 className="text-2xl font-bold mt-8 mb-4">Regularization & Stabilization</h2>
+        <div className="grid gap-4 my-6">
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">Dropout</h3>
+              <p className="text-sm text-muted-foreground">
+                Randomly zero out activations during training (rate 0.1-0.5). Prevents co-adaptation
+                of neurons. At inference, scale activations by (1-p).
               </p>
-              <div className="text-xs space-y-1 ml-2 mb-2">
-                <div>• Training accuracy: 98%</div>
-                <div>• Validation accuracy: 72%</div>
-                <div>• Gap: 26% difference</div>
-              </div>
-              <p className="text-xs font-medium mb-1">Diagnosis and solution?</p>
-              <p className="text-xs text-muted-foreground italic">
-                Answer: Overfitting! Try adding dropout, regularization, or getting more training data.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">Batch Normalization</h3>
+              <p className="text-sm text-muted-foreground">
+                Normalize layer inputs per mini-batch: x̂ = (x−μ)/√(σ²+ε), then scale with learned γ, β.
+                Stabilizes training, allows higher learning rates. Use LayerNorm for RNNs/Transformers.
               </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">Weight Decay (L2 Regularization)</h3>
+              <p className="text-sm text-muted-foreground">
+                Add λ||θ||² to loss or decouple as θ ← (1−λη)θ before gradient step (AdamW).
+                Typical: λ = 1e-4 to 1e-2.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">Early Stopping</h3>
+              <p className="text-sm text-muted-foreground">
+                Monitor validation loss, stop when it stops improving for N epochs (patience).
+                Restore best checkpoint. Free regularization.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card className="my-6 border-green-500/20 bg-green-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              📊 Visual Explanations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-background p-4 rounded-lg border">
-              <p className="text-sm font-medium mb-3">Learning Rate Effects</p>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Too High:</div>
-                  <div className="flex-1 p-2 bg-red-100 rounded">Oscillation, divergence, no convergence</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Just Right:</div>
-                  <div className="flex-1 p-2 bg-green-100 rounded">Smooth convergence to minimum</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 text-right font-medium">Too Low:</div>
-                  <div className="flex-1 p-2 bg-yellow-100 rounded">Very slow convergence, may get stuck</div>
-                </div>
-              </div>
+        <Card className="my-6 bg-accent/50 border-accent">
+          <CardContent className="p-6">
+            <h3 className="font-semibold mb-2">🎯 Practical Recipe</h3>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>1. Start with Adam/AdamW, lr=3e-4, weight_decay=1e-2</p>
+              <p>2. Use cosine learning rate schedule with warmup</p>
+              <p>3. Add dropout (0.1) and batch/layer normalization</p>
+              <p>4. Train until validation loss plateaus (early stopping)</p>
+              <p>5. If SGD+momentum gives better results, switch and tune lr carefully</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="my-6 border-purple-500/20 bg-purple-500/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ⚡ Quick Reference
-            </CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">⚡ Quick Reference</CardTitle></CardHeader>
           <CardContent>
-            <div className="grid gap-3 text-sm">
+            <div className="grid gap-2 text-sm">
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Backprop</span>
-                <span className="text-muted-foreground">Algorithm to compute gradients for weight updates</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Adam</span>
+                <span className="text-muted-foreground">Adaptive optimizer — default choice for DL</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Learning Rate</span>
-                <span className="text-muted-foreground">Step size for weight updates</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Warmup</span>
+                <span className="text-muted-foreground">Gradually increase LR at start of training</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Batch Size</span>
-                <span className="text-muted-foreground">Number of samples per gradient update</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Dropout</span>
+                <span className="text-muted-foreground">Random zero-out during training for regularization</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">Loss Function</span>
-                <span className="text-muted-foreground">Measure of prediction error to minimize</span>
+                <span className="font-mono text-xs bg-muted px-2 py-1 rounded">BatchNorm</span>
+                <span className="text-muted-foreground">Normalize activations per mini-batch</span>
               </div>
             </div>
           </CardContent>
