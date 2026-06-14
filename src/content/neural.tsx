@@ -1,5 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Article } from './types'
+import ActivationFunctionsChart from '@/components/visualizations/ActivationFunctions'
+import NetworkVisualizer from '@/components/visualizations/NetworkVisualizer'
+import BackpropAnimation from '@/components/visualizations/BackpropAnimation'
+import InteractiveNeuralTrainer from '@/components/visualizations/NeuralTrainer'
 
 export const neuralArticles: Record<string, Article> = {
   basics: {
@@ -13,6 +17,9 @@ export const neuralArticles: Record<string, Article> = {
           representations of data by stacking simple transformations — each layer extracts increasingly
           abstract features from the input.
         </p>
+
+        {/* Interactive: Network Evolution */}
+        <NetworkVisualizer />
 
         <h2 className="text-2xl font-bold mt-8 mb-4">The Artificial Neuron</h2>
         <p className="leading-relaxed mb-4">
@@ -77,6 +84,9 @@ export const neuralArticles: Record<string, Article> = {
             </CardContent>
           </Card>
         </div>
+
+        {/* Interactive: Activation Functions Explorer */}
+        <ActivationFunctionsChart />
 
         <h2 className="text-2xl font-bold mt-8 mb-4">Why Non-Linearity Matters</h2>
         <Card className="my-6 bg-accent/50 border-accent">
@@ -257,6 +267,9 @@ export const neuralArticles: Record<string, Article> = {
           makes this efficient by reusing intermediate computations in a single backward pass.
         </p>
 
+        {/* Interactive: Backpropagation Animation */}
+        <BackpropAnimation />
+
         <h2 className="text-2xl font-bold mt-8 mb-4">The Core Idea</h2>
         <p className="leading-relaxed mb-4">
           Backpropagation is simply the chain rule of calculus applied systematically to a computational
@@ -400,6 +413,9 @@ export const neuralArticles: Record<string, Article> = {
           how to use those gradients to update weights effectively. This section covers optimization
           algorithms and training stabilization techniques.
         </p>
+
+        {/* Interactive: Neural Network Trainer */}
+        <InteractiveNeuralTrainer />
 
         <h2 className="text-2xl font-bold mt-8 mb-4">Gradient Descent Variants</h2>
         <div className="grid gap-4 my-6">

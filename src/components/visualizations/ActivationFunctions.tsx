@@ -248,7 +248,7 @@ export default function ActivationFunctionsChart() {
                 className={`rounded-lg border p-1.5 transition-all ${
                   active === key ? 'ring-2 shadow-sm' : 'opacity-60 hover:opacity-100'
                 }`}
-                style={active === key ? { ringColor: FUNCTIONS[key].color } : undefined}
+                style={active === key ? { boxShadow: `0 0 0 2px ${FUNCTIONS[key].color}` } : undefined}
               >
                 <div className="h-12">
                   <MiniPlot
